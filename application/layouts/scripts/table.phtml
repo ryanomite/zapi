@@ -8,6 +8,7 @@ $controller = Zend_Controller_Front::getInstance()->getRequest()->getControllerN
 
 $arrRow = array();
 
+
 try {
 
     $delimiter = ',';
@@ -64,40 +65,107 @@ if (empty($arrRow)) {
 
 $header = array_shift($arrRow);
 
+if (empty($_REQUEST['tableonly'])):
 ?>
+<!-- Generated with Zapi API -->
 <html>
 <head>
     <title>Zapi Recordset</title>
-    <link href="http://publisher.adknowledge.com/css/adkui.css" media="screen" rel="stylesheet" type="text/css" ></link>
+    <style type="text/css" media="screen">
+        body {
+            background-color: #fff;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            line-height: 20px;
+            color: #333;
+            text-shadow: #fff 1px 1px 1px;
+        }
+
+        .zapiTable {
+            border-collapse: collapse;
+            width: 100%;
+            text-align: left;
+        }
+
+        .zapiTable thead {
+            font-size: 11px;
+            line-height: 13px;
+            font-weight: normal;
+
+            color: #4e4e4e;
+            text-align: left;
+            background-color: #e6e6e6;
+            background: -moz-linear-gradient(top, #fafafa, #e6e6e6);
+            background: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#e6e6e6));
+            filter: progid:DXImageTransform.Microsoft.Gradient(
+                        StartColorStr='#fafafa', EndColorStr='#e6e6e6', GradientType=0);
+
+            border: 1px solid #d3d3d3;
+
+            text-shadow: #fff 1px 1px 1px;
+
+            -moz-box-shadow: 0px 1px 0px #a3a3a3;
+            -webkit-box-shadow: 0px 1px 0px #a3a3a3;
+            box-shadow: 0px 1px 0px #a3a3a3;
+        }
+
+        .zapiTable tbody {
+            font-size: 11px;
+            font-weight: normal;
+        }
+
+        .zapiTable thead th,
+        .zapiTable tbody td,
+        .zapiTable tfoot td {
+            border: 1px solid #d3d3d3;
+            margin: auto;
+            line-height: 13px;
+            padding: 7px 7px 6px 7px;
+        }
+
+        .zapiTable tbody tr:hover {
+            background-color: #f3f3f3 !important;
+        }
+
+        .zapiTable tbody tr {
+            background-color: #fff;
+        }
+
+        .zapiTable tfoot {
+            font-size: 11px;
+            background-color: #e6f0f7;
+        }
+
+   </style>
 </head>
 <body>
-    <div class="containerMain">
-        <div id="uiBuffer">
-        <table class="uiTable">
-            <thead>
-            <tr>
-                <?php
-                foreach ($header as $col) {
-                ?>
-                    <th><?php echo $col ?></th>
-                <?php } ?>
-            </tr>
-            </thead>
-            <tbody>
-            <?php
-            foreach ($arrRow as $row) {
-                echo "<tr>";
-                foreach ($row as $col) {
-                ?>
-                    <td><?php echo $col ?></td>
-                <?php
-                }
-                echo "</tr>\n";
-            }?>
-            </tbody>
-        </table>
-        </div>
-    </div>
+<?php
+    endif;
+?>
+<table class="zapiTable">
+    <thead>
+    <tr>
+        <?php
+        foreach ($header as $col) {
+        ?>
+            <th><?php echo $col ?></th>
+        <?php } ?>
+    </tr>
+    </thead>
+    <tbody>
+    <?php
+    foreach ($arrRow as $row) {
+        echo "<tr>";
+        foreach ($row as $col) {
+        ?>
+            <td><?php echo $col ?></td>
+        <?php
+        }
+        echo "</tr>\n";
+    }?>
+    </tbody>
+</table>
+<?php if (empty($_REQUEST['tableonly'])): ?>
 </body>
-
 </html>
+<?php endif;
