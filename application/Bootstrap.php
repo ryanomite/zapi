@@ -224,7 +224,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         //$this->_front->registerPlugin(new Api_Plugin_Signature);
         $this->_front->registerPlugin(new Api_Plugin_TypeExtension);
         $this->_front->registerPlugin(new Api_Plugin_StartupErrors);
-        $this->_front->addModuleDirectory(realpath(APPLICATION_PATH . '/modules'));
+        $this->_front->addModuleDirectory($this->_config->resources->frontController->moduleDirectory);
+
         $this->_front->setDefaultModule('api');
 
         $restful = new Api_Plugin_RestRoute($this->_front);
