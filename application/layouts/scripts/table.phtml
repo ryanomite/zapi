@@ -1,0 +1,103 @@
+<?
+
+$data = false;
+$data = @$this->data;
+
+$controller = false;
+$controller = Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+
+$arrRow = array();
+
+try {
+
+    $delimiter = ',';
+    $textpad = '"';
+
+    // Only attempt formatting if data is two-dimensional
+    if (! Api_Controller::is2D($data)) {
+        throw new Exception();
+    }
+
+
+    if ('string' !== gettype($data)) {
+
+        $columns = array();
+        $data = (array)$data;   // Typecast
+
+        if (count($data)) {
+
+            // Pass 1: Determine all keys
+
+            foreach ($data as $row) {
+                foreach ($row as $column=>$value) {
+                    if (!in_array($column,$columns)) {
+                        $columns[] = $column;
+                    }
+                }
+            }
+
+            // Build header row;
+            $arrRow[] = $columns;
+
+            // Pass 2: Build rows:
+            foreach ($data as $row) {
+                $arrCol = array();
+                foreach ($columns as $column) {
+                    $val = (!isset($row[$column]) || is_bool($row[$column]) || is_null($row[$column])) ? '' : $row[$column];
+                    $arrCol[] = $val;
+                }
+                $arrRow[] = $arrCol;
+            }
+        }
+
+    }
+
+
+} catch (Exception $e) {
+     echo "status,message\n0,\"Cannot generate table from dataset\"";
+}
+
+if (empty($arrRow)) {
+    echo "No records.";
+    exit;
+}
+
+$header = array_shift($arrRow);
+
+?>
+<html>
+<head>
+    <title>Zapi Recordset</title>
+    <link href="http://publisher.adknowledge.com/css/adkui.css" media="screen" rel="stylesheet" type="text/css" ></link>
+</head>
+<body>
+    <div class="containerMain">
+        <div id="uiBuffer">
+        <table class="uiTable">
+            <thead>
+            <tr>
+                <?php
+                foreach ($header as $col) {
+                ?>
+                    <th><?php echo $col ?></th>
+                <?php } ?>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            foreach ($arrRow as $row) {
+                echo "<tr>";
+                foreach ($row as $col) {
+                ?>
+                    <td><?php echo $col ?></td>
+                <?php
+                }
+                echo "</tr>\n";
+            }?>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</body>
+
+</html>
