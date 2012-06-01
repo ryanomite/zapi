@@ -1,0 +1,35 @@
+<?php
+
+$response = false;
+$response = @$this->response;
+
+$controller = false;
+$controller = Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+
+header('Content-Type: text/xml');
+header('Content-Disposition: inline; filename=' . $controller . '.xml');
+
+try {
+
+
+    $serializer = new XML_Serializer(array(
+                                    "indent"    => "    ",
+                                    "linebreak" => "\n",
+                                    "typeHints" => false,
+                                    "addDecl"   => true,
+                                    "encoding"  => "UTF-8",
+                                    "rootName"   => "response",
+                                    "defaultTagName" => "record",
+                                  //  "cdata" => true
+
+                                ));
+    $result = $serializer->serialize( $response );
+    if ($result) {
+        echo $serializer->getSerializedData();
+    } else {
+        throw new Exception();
+    }
+
+} catch (Exception $e) {
+     echo '<response><message>Cannot generate XML from dataset</message><status>0</status></response>';
+}

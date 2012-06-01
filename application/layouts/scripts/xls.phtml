@@ -1,0 +1,67 @@
+<?
+
+require_once 'Spreadsheet/Excel/Writer.php';
+
+$data = false;
+$data = @$this->data;
+
+$controller = false;
+$controller = Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+
+
+try {
+
+
+    // Only attempt formatting if data is two-dimensional
+    if (! Api_Controller::is2D($data)) {
+        throw new Exception();
+    }
+
+    $workbook = new Spreadsheet_Excel_Writer();
+    $workbook->send( $controller . '.xls');
+    $worksheet = &$workbook->addWorksheet('API');
+
+
+    $columns = array();
+    $arrRow = array();
+
+    $data = (array)$data;   // Typecast
+
+    if (count($data)) {
+
+        // Pass 1: Determine all keys
+
+        foreach ($data as $row) {
+            foreach ($row as $column=>$value) {
+                if (!in_array($column,$columns)) {
+                    $columns[] = $column;
+                }
+            }
+        }
+
+        // Build header row;
+        $arrRow[] = $columns;
+
+        // Pass 2: Build rows:
+        foreach ($data as $row) {
+            $arrCol = array();
+            foreach ($columns as $column) {
+                $val = empty($row[$column]) ? '' : $row[$column];
+                $arrCol[] = $val;
+            }
+            $arrRow[] = $arrCol;
+        }
+    }
+
+    foreach ($arrRow as $i => $row) {
+        foreach ($row as $j => $col) {
+            $worksheet->write($i,$j,$col);
+        }
+    }
+
+    $workbook->close();
+
+
+} catch (Exception $e) {
+     echo "status,message\n0,\"Cannot generate Excel from dataset\"";
+}

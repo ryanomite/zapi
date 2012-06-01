@@ -1,0 +1,38 @@
+<?php
+echo $this->doctype() . "\n";
+
+$front = Zend_Controller_Front::getInstance();
+$request = $front->getRequest();
+$actionName = $request->getActionName();
+$content = $this->layout()->content;
+$cfg = Zend_Registry::get('config');
+
+$this->headLink()->prependStylesheet('/css/default.css');
+
+$this->headScript()->prependScript( "var server_time = " . (time() * 1) . "; var server_offset = server_time - parseInt((Date.parse(Date()))/1000);", $type = 'text/javascript');
+
+?>
+<html>
+    <head>
+        <title><?php echo (isset($this->title) ? $this->title : 'Adknowledge')?></title>
+		<meta http-equiv="x-dns-prefetch-control" content="off">
+        <?php
+        echo $this->headMeta()   . "\n";
+        echo $this->headLink()   . "\n";
+        echo $this->headStyle()  . "\n";
+        echo $this->headScript() . "\n";
+        ?>
+    </head>
+    <body>
+        <noscript>
+            <div id="noscript">
+                <img src="/images/icons/i_icon_notice.gif" width="16" height="16" alt="" />
+                This website requires that you have javascript enabled on your browser.
+            </div>
+        </noscript>
+
+<?
+        echo $content;
+?>
+    </body>
+</html>

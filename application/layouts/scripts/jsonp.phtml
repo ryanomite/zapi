@@ -1,0 +1,19 @@
+<?
+
+$response = false;
+$response = @$this->response;
+
+header('Cache-Control: no-cache, must-revalidate');
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Content-type: text/javascript');
+
+
+$json = json_encode($response);
+$callback = Zend_Registry::isRegistered('callback') ? Zend_Registry::get('callback') : false;
+
+if (!empty($callback)) {
+    echo "$callback($json)";
+} else {
+    echo $json;
+}
+exit;

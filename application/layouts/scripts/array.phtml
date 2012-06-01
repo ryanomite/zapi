@@ -1,0 +1,22 @@
+<?
+
+$response = false;
+$response = @$this->response;
+
+header('Cache-Control: no-cache, must-revalidate');
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Content-type: application/json');
+
+if (isset($response['data']) && !empty($response['status'])) {
+    $records = array();
+    foreach ($response['data'] as $record) {
+        if (isset($record['report_date'])) {
+            $record['report_date'] = strtotime($record['report_date']);
+        }
+        $records[] = is_array($record) ? array_values($record) : $record;
+    }
+    $response['data'] = $records;
+}
+
+echo json_encode($response,JSON_NUMERIC_CHECK); exit;
+//echo $this->json($response);

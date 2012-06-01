@@ -1,0 +1,35 @@
+<?php
+$data = false;
+$data = @$this->response['data'];
+
+try {
+
+    // Must have data - otherwise, output blank pixel
+    if (empty($data)) throw new Exception('No data to render');
+
+    // Build default parameters from recordset
+    //$params = array_map('jsonDecode',$_GET);
+    $params = $_GET;
+
+    if (!empty($params['debug'])) {
+        $this->url = Api_GoogleChart::debug( $data, $params );
+    } else {
+        if (empty($params['redirect'])) {
+            Api_GoogleChart::render( $data, $params );
+        } else {
+            Api_GoogleChart::renderRedirect( $data, $params );
+        }
+    }
+} catch (Exception $e) {
+    Api_GoogleChart::pixel();
+}
+
+//-------------------------------------------------//
+
+function jsonDecode( $str ) {
+    if (null === $raw = json_decode($str,true) ) {
+        return $str;
+    } else {
+        return $raw;
+    }
+}

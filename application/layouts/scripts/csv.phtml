@@ -1,0 +1,67 @@
+<?
+
+$data = false;
+$data = @$this->data;
+
+$controller = false;
+$controller = Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+
+
+header('Content-type: text/x-csv');
+header('Content-Disposition: download; filename=' . $controller . '.csv');
+
+try {
+
+    $delimiter = ',';
+    $textpad = '"';
+
+    // Only attempt formatting if data is two-dimensional
+    if (! Api_Controller::is2D($data)) {
+        throw new Exception();
+    }
+
+    if ('string' !== gettype($data)) {
+
+        $columns = array();
+        $arrRow = array();
+
+        $data = (array)$data;   // Typecast
+
+        if (count($data)) {
+
+            // Pass 1: Determine all keys
+
+            foreach ($data as $row) {
+                foreach ($row as $column=>$value) {
+                    if (!in_array($column,$columns)) {
+                        $columns[] = $column;
+                    }
+                }
+            }
+
+            // Build header row;
+            $arrRow[] = implode($delimiter, $columns);
+
+            // Pass 2: Build rows:
+            foreach ($data as $row) {
+                $arrCol = array();
+                foreach ($columns as $column) {
+                    $val = empty($row[$column]) ? '' : $row[$column];
+                    $val = str_replace($textpad,"\\".$textpad, $val);
+                    if (! is_numeric($val)) { $val = $textpad . $val . $textpad; }
+                    $arrCol[] = $val;
+                }
+                $arrRow[] = implode($delimiter, $arrCol);
+            }
+        }
+
+        $data = implode("\n",$arrRow);
+
+    }
+
+    echo $data;
+
+
+} catch (Exception $e) {
+     echo "status,message\n0,\"Cannot generate CSV from dataset\"";
+}
