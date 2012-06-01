@@ -1,17 +1,20 @@
 zapi
 ====
 
-A generic Zend Framework stack for a flexible RESTful API
+A generic Zend Framework stack that provides a flexible RESTful API service, extending the Zend_Rest_Route by adding the ability to request data in different formats with an extension in the URL (for example /sample-api.xml). Zapi also offers support for token-based authentication, though it's up to the developer to implement the actual token validation.
 
-## Basic Usage
+Zapi also provides generic ZF support for database access, caching, and graph outputs. Exceptions are automatically caught, and handled in the same format as other API calls.
 
-Zapi provides a RESTful API interface, building on the Zend_Rest_Route router to forward to actions by HTTP verb. Further, Zapi provides different output types available through different extensions.
+## Supported output formats
 
-For example, a POST to /admin/user.xml will invoke the postAction of the UserController of the Admin module, rendering it using the XML layout (layouts/xml.phtml)
+Zapi offers a wide variety of output formats, including:
 
-At this time Zapi supports three different response types:
-
-* json (default) - Javascript Object Notation
-* xml - XML document. Please note that the <record> element is used for dataset records.
-* csv - Comma-delimited text (2-dimensional datasets only)
-
+* json
+* xml
+* xls (Microsoft (R) Excel 2003)
+* csv
+* txt (Tab-delimited)
+* png (Basic graphs, using the Google Chart API)
+* html (unformatted)
+* data (PHP-serialized output)
+* table (HTML table)
