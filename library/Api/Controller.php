@@ -25,7 +25,7 @@ class Api_Controller extends Zend_Controller_Action
         $this->_registry = Zend_Registry::getInstance();
         $this->_db = $this->_registry->get('db');
         $this->_time = time();
-        
+
         //$this->profile = $this->_profile; // for Debugging
     }
 
@@ -34,12 +34,13 @@ class Api_Controller extends Zend_Controller_Action
         $this->_forward('get');
     }
 
-    public function output($data = false, $status = false) {
+    public function output($data = false, $status = false)
+    {
         $layout = Zend_Layout::getMvcInstance();
         $view = $layout->getView();
 
-        if (false !== $data)  $this->_data = $data;
-        if (false !== $status)  $this->_status = $status;
+        if (false !== $data) $this->_data = $data;
+        if (false !== $status) $this->_status = $status;
 
 
         // Import any messages from registry
@@ -61,9 +62,10 @@ class Api_Controller extends Zend_Controller_Action
 
     }
 
-    public function __set($name, $value) {
+    public function __set($name, $value)
+    {
 
-        if (strlen($name)>1 && substr($name,0,1)!='_') {
+        if (strlen($name) > 1 && substr($name, 0, 1) != '_') {
             switch ($name) {
                 case 'status':
                     $this->_status = $value;
@@ -89,7 +91,8 @@ class Api_Controller extends Zend_Controller_Action
         }
     }
 
-    public function __get($name) {
+    public function __get($name)
+    {
         if ('status' == $name) {
             return $this->_status;
         } elseif ('data' == $name) {
@@ -99,16 +102,17 @@ class Api_Controller extends Zend_Controller_Action
         }
     }
 
-    public function addMessage($value, $type = 0) {
-        switch(gettype($value)) {
+    public function addMessage($value, $type = 0)
+    {
+        switch (gettype($value)) {
             case 'array':
                 break;
             default:
-                $value = array('type'=>$type,'message'=>(string)$value);
+                $value = array('type' => $type, 'message' => (string)$value);
         }
-        if (! $this->_messages) $this->_messages = array();
+        if (!$this->_messages) $this->_messages = array();
         $this->_messages[] = $value;
-        
+
     }
 
     /**
@@ -119,20 +123,23 @@ class Api_Controller extends Zend_Controller_Action
      * Iterates through API dataset, and returns true if data is scalar, an array of scalars, or an object of scalar properties
      * Used to determine if data can be outputted to CSV, text, or Excel
      */
-    protected function _is2D($data = false) {
+    protected function _is2D($data = false)
+    {
 
         if (false === $data) {
-            $data = $this->_data;
+            $data = $this->_output['data'];
         }
         if (is_scalar($data)) {
             return false;
         } else {
-            foreach ($data as $i=>$v1) {
+            $data = (array)$data;
+
+            foreach ($data as $i => $v1) {
                 if (is_scalar($v1)) {
                     return false;
                 } else {
-                    foreach ($v1 as $i=>$v2) {
-                        if (!is_scalar($v2)) {
+                    foreach ($v1 as $i => $v2) {
+                        if (!is_scalar($v2) && !self::_is2D($v2)) {
                             return false;
                         }
                     }
@@ -145,11 +152,13 @@ class Api_Controller extends Zend_Controller_Action
     /**
      * Public wrapper, for API layout use/filtering
      */
-    public static function is2D($data = false) {
+    public static function is2D($data = false)
+    {
         return self::_is2D($data);
     }
 
-    public function postDispatch() {
+    public function postDispatch()
+    {
         $this->output();
     }
 

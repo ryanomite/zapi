@@ -7,12 +7,12 @@
 class Api_Authenticate implements Zend_Auth_Adapter_Interface
 {
 
-	const PROFILE   = 'profile';
+    const PROFILE = 'profile';
 
-	const MASTER    = 64;
-    const SIGNED    = 32;
-    const USER      = 2;
-	const GUEST     = 1;
+    const MASTER = 64;
+    const SIGNED = 32;
+    const USER = 2;
+    const GUEST = 1;
 
     protected $_email, $_password, $_config, $_db;
     protected $_data = null;
@@ -47,7 +47,7 @@ class Api_Authenticate implements Zend_Auth_Adapter_Interface
      */
     public static function checkResource($resource)
     {
-    	$profile = Zend_Registry::get(self::PROFILE);
+        $profile = Zend_Registry::get(self::PROFILE);
         $profile_role = empty($profile['role']) ? self::GUEST : $profile['role'];
         return ($resource & $profile_role) ? true : false;
 
@@ -56,30 +56,32 @@ class Api_Authenticate implements Zend_Auth_Adapter_Interface
 
     public static function assertResource($resource)
     {
-    	$profile = Zend_Registry::get(self::PROFILE);
+        $profile = Zend_Registry::get(self::PROFILE);
         $profile_role = empty($profile['role']) ? self::GUEST : $profile['role'];
 
         if (!($resource & $profile_role)) {
             $required = self::getRoles($resource);
-	    	throw new Exception('The following access levels are required for this resource: ' . implode(' or ',$required) . '');
-    	}
+            throw new Exception('The following access levels are required for this resource: ' . implode(' or ', $required) . '');
+        }
 
-    } 
+    }
 
     public static function getRoles($resource)
     {
         $roles = array();
         foreach (self::$_labels as $role => $label) {
-            if ($resource & $role) { $roles[] = $label; }
+            if ($resource & $role) {
+                $roles[] = $label;
+            }
         }
         return $roles;
     }
 
     public static function assertUser()
     {
-    	return self::assertResource(self::USER);
+        return self::assertResource(self::USER);
     }
-    
+
 
     /**
      * Performs an auth attempt against the database
@@ -118,7 +120,7 @@ class Api_Authenticate implements Zend_Auth_Adapter_Interface
 
         }
 
-        $this->_result = new Zend_Auth_Result( $this->_code, $this->_data, $this->_messages );
+        $this->_result = new Zend_Auth_Result($this->_code, $this->_data, $this->_messages);
         return $this->_result;
 
     }
@@ -142,45 +144,48 @@ class Api_Authenticate implements Zend_Auth_Adapter_Interface
     /**
      * @return int
      */
-    public function getCode() {
+    public function getCode()
+    {
         return $this->_code;
     }
 
-      /**
+    /**
      * @return boolean
      */
-    public function userExists() {
-        return ! (Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND == $this->_code);
+    public function userExists()
+    {
+        return !(Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND == $this->_code);
     }
 
-    
+
     /**
      * Get friendly message for Zend_Auth_Result
      * @return string
      */
-    public function getMessage() {
-    	
+    public function getMessage()
+    {
+
         switch ($this->_code) {
 
-        case Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID:
-            $message = 'API request signature is invalid.';
-            break;
+            case Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID:
+                $message = 'API request signature is invalid.';
+                break;
 
-        case Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND:
-            $message = 'The email/password or token provided does not match a valid account. Please try again.';
-            break;
+            case Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND:
+                $message = 'The email/password or token provided does not match a valid account. Please try again.';
+                break;
 
-        case Zend_Auth_Result::FAILURE:
-            $message = 'You must enter a valid token, or *both* a valid email address and a valid password.';
-            break;            
-            
-        case Zend_Auth_Result::SUCCESS:
-            $message = 'Successful authentication.';
-            break;
+            case Zend_Auth_Result::FAILURE:
+                $message = 'You must enter a valid token, or *both* a valid email address and a valid password.';
+                break;
 
-        default:
-            $message = 'Unable to authenticate.';
-            break;
+            case Zend_Auth_Result::SUCCESS:
+                $message = 'Successful authentication.';
+                break;
+
+            default:
+                $message = 'Unable to authenticate.';
+                break;
         }
 
         return $message;

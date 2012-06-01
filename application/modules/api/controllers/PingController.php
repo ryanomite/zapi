@@ -13,6 +13,5 @@ class PingController extends Api_Controller
         $this->time = time();
     }
 
-
 }
 
