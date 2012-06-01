@@ -11,7 +11,7 @@ Zapi offers a wide variety of output formats, including:
 
 * json
 * xml
-* xls (Microsoft (R) Excel 2003)
+* xls (Microsoft (R) Excel 2003) - NOTE: PEAR dependencies must be installed
 * csv
 * txt (Tab-delimited)
 * png (Basic graphs, using the Google Chart API)
