@@ -43,8 +43,6 @@ try {
 } catch (Exception $e) {
 
     //TODO: replace with application logging
-    print_r($e);
-    exit;
 }
 
 function getmicrotime($t)
