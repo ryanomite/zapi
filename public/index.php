@@ -13,10 +13,6 @@ defined('APPLICATION_PATH')
 // Local library
 defined('LOCAL_LIBRARY_PATH') ||
 	define('LOCAL_LIBRARY_PATH', (getenv('LOCAL_LIBRARY_PATH') ? getenv('LOCAL_LIBRARY_PATH') : BASE_PATH . '/library'));
-// Shared library
-defined('SHARED_LIBRARY_PATH') ||
-	define('SHARED_LIBRARY_PATH', (getenv('SHARED_LIBRARY_PATH') ? getenv('SHARED_LIBRARY_PATH') : BASE_PATH . '/../slibrary'));
-
 // Define application environment
 defined('APPLICATION_ENV')
     || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
@@ -24,9 +20,6 @@ defined('APPLICATION_ENV')
 // Update include path
 set_include_path(implode(PATH_SEPARATOR, array(
     LOCAL_LIBRARY_PATH,
-    LOCAL_LIBRARY_PATH . '/PEAR',
-    SHARED_LIBRARY_PATH,
-    SHARED_LIBRARY_PATH . '/PEAR',
     get_include_path(),
 )));
 
@@ -42,7 +35,26 @@ try {
                 ->run();
 } catch (Exception $e) {
 
-    //TODO: replace with application logging
+    $json = array(
+        'status' => 0,
+        'data' => array(),
+        'messages' => array(
+            array('type'=>0,'message'=>'An error has occurred.')
+        )
+    );
+
+    if (preg_match('/^development/i',getenv('APPLICATION_ENV'))) {
+        $json['messages']['message'] = $e->getMessage();
+        $json['file'] = $e->getFile();
+        $json['line'] = $e->getLine();
+        $json['stack'] = $e->getTrace();
+    }
+
+    header('Cache-Control: no-cache, must-revalidate');
+    header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+    header('Content-type: application/json');
+
+    echo json_encode($json);
 }
 
 function getmicrotime($t)
